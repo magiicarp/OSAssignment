@@ -3,6 +3,7 @@ package algorithm;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +34,7 @@ public class DiskOptimization {
     {
         generateFCFS();
         generateSSTF();
-        //generateSCAN();
+        generateSCAN();
     }
 
     public void printSequence(String name, int location[])
@@ -80,12 +81,11 @@ public class DiskOptimization {
         int location[] = arrangeBySSTF(dp.getCurrent(), dp.getSequence());
         printSequence("SSTF", location);
     }
-
     //generate SCAN
-    //public void generateSCAN(){
-    //    int location[] = arrangeBySCAN(dp.getPrevious(), dp.getCurrent(), dp.getSequence(), dp.getCylinders());
-    //    printSequence("SCAN", location);
-    //}
+    public void generateSCAN(){
+        int location[] = arrangeBySCAN(dp.getPrevious(), dp.getCurrent(), dp.getSequence(), dp.getCylinders());
+        printSequence("SCAN", location);
+    }
 
     //arange bt sstf
     private int[] arrangeBySSTF(int current, int sequence[])
@@ -120,7 +120,61 @@ public class DiskOptimization {
         return sstf;
     }
 
+    private int[] arrangeBySCAN(int previous, int current, int sequence[], int cylinders) {
+        int n = sequence.length;
+        ArrayList<Integer> new_sequence = new ArrayList<>();
+        ArrayList<Integer> result = new ArrayList<>();
+        int[] test = new int[]{1,2};
+        int max = cylinders -1;
+        //add sequence values to newSequence
+        for (int i = 0; i < n; i++) {
+            new_sequence.add(sequence[i]);
+        }
+        //add current to the newSequence end ArrayList
+        new_sequence.add(current);
+        //Sort newSequence (ascending order)
+        Collections.sort(new_sequence);
 
+        int location = new_sequence.indexOf(current);
+        //if previous < current - movement will be towards right(towards max)
+        if (previous < current) {
+            //add values to accessOrder starting from current (will be in the first index) to the end of arrayList
+            for (int i = location; i < new_sequence.size(); i++) {
+                result.add(new_sequence.get(i));
+            }
+            //add max as it is not inside the arrayList yet
+            result.add(max);
+            //
+            for (int i = location - 1; i >= 0; i--) {
+                result.add(new_sequence.get(i));
+            }
+            //result.remove(0);
+            int[] myarray = new int[result.size()];
+            for (int i = 0; i < result.size(); i++) {
+                myarray[i] = result.get(i);
+            }
+            return myarray;
+        }
+        else {
+            for (int i = location; i >= 0; i--) {
+                result.add(new_sequence.get(i));
+            }
+            if (!result.contains(0)) {
+                result.add(0);
+            }
+            for (int i = location + 1; i < new_sequence.size(); i++) {
+                result.add(new_sequence.get(i));
+            }
+            result.remove(0);
+            System.out.println(result);
+            int[] myarray = new int[result.size()];
+            for (int i = 0; i < result.size(); i++) {
+                myarray[i] = result.get(i);
+            }
+            return myarray;
+        }
+
+    }
 }
 
 
