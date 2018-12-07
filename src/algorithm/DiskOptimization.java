@@ -148,7 +148,8 @@ public class DiskOptimization {
             for (int i = location - 1; i >= 0; i--) {
                 result.add(new_sequence.get(i));
             }
-            //result.remove(0);
+            //remove extra current at starting index
+            result.remove(0);
             int[] scan = new int[result.size()];
             for (int i = 0; i < result.size(); i++) {
                 scan[i] = result.get(i);
