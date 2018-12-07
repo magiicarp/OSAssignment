@@ -149,11 +149,11 @@ public class DiskOptimization {
                 result.add(new_sequence.get(i));
             }
             //result.remove(0);
-            int[] myarray = new int[result.size()];
+            int[] scan = new int[result.size()];
             for (int i = 0; i < result.size(); i++) {
-                myarray[i] = result.get(i);
+                scan[i] = result.get(i);
             }
-            return myarray;
+            return scan;
         }
         else {
             for (int i = location; i >= 0; i--) {
@@ -166,12 +166,12 @@ public class DiskOptimization {
                 result.add(new_sequence.get(i));
             }
             result.remove(0);
-            System.out.println(result);
-            int[] myarray = new int[result.size()];
+
+            int[] scan = new int[result.size()];
             for (int i = 0; i < result.size(); i++) {
-                myarray[i] = result.get(i);
+                scan[i] = result.get(i);
             }
-            return myarray;
+            return scan;
         }
 
     }
