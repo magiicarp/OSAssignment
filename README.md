@@ -1,10 +1,10 @@
 # OSAssignment
 
 **to do list**
-- scan
-- cscan
+- scan (sort of done)
+- cscan (sort of done)
 - look
 - comments for code
 
-**take note**
-- pls don't copy the scan bc i copy from someone else and trying to edit the codes so it's not "copied" thx
+**pl help**
+- if codes can be furthered simplified pls help simplify bc it looks messy
