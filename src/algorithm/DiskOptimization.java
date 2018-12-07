@@ -35,6 +35,7 @@ public class DiskOptimization {
         generateFCFS();
         generateSSTF();
         generateSCAN();
+        generateCSCAN();
     }
 
     public void printSequence(String name, int location[])
@@ -86,6 +87,11 @@ public class DiskOptimization {
         int location[] = arrangeBySCAN(dp.getPrevious(), dp.getCurrent(), dp.getSequence(), dp.getCylinders());
         printSequence("SCAN", location);
     }
+    //generate CSCAN
+    public void generateCSCAN(){
+        int location[] = arrangeByCSCAN(dp.getPrevious(), dp.getCurrent(), dp.getSequence(), dp.getCylinders());
+        printSequence("CSCAN", location);
+    }
 
     //arange bt sstf
     private int[] arrangeBySSTF(int current, int sequence[])
@@ -121,60 +127,116 @@ public class DiskOptimization {
     }
 
     private int[] arrangeBySCAN(int previous, int current, int sequence[], int cylinders) {
-        int n = sequence.length;
-        ArrayList<Integer> new_sequence = new ArrayList<>();
-        ArrayList<Integer> result = new ArrayList<>();
-        int[] test = new int[]{1,2};
+        int s = sequence.length;
+        ArrayList<Integer> accessOrder = new ArrayList<>();
+        ArrayList<Integer> tmpSequence = new ArrayList<>();
         int max = cylinders -1;
+        int min = 0;
         //add sequence values to newSequence
-        for (int i = 0; i < n; i++) {
-            new_sequence.add(sequence[i]);
+        for (int i = 0; i < s; i++) {
+            tmpSequence.add(sequence[i]);
         }
         //add current to the newSequence end ArrayList
-        new_sequence.add(current);
+        tmpSequence.add(current);
         //Sort newSequence (ascending order)
-        Collections.sort(new_sequence);
+        Collections.sort(tmpSequence);
 
-        int location = new_sequence.indexOf(current);
-        //if previous < current - movement will be towards right(towards max)
-        if (previous < current) {
+        //if previous > current - movement will be towards left(towards min)
+        if (previous > current) {
+            //goes bac by 1 index and inserts element into accessOrder
+            for (int i = tmpSequence.indexOf(current); i >= 0; i--) {
+                accessOrder.add(tmpSequence.get(i));
+            }
+            //add min as it is not in arrayList
+            accessOrder.add(min);
+            //insert the rest of the elements into the accessOrder
+            for (int i = tmpSequence.indexOf(current) + 1; i < tmpSequence.size(); i++) {
+                accessOrder.add(tmpSequence.get(i));
+            }
+            //remove extra current at the front bc idk why it's there
+            accessOrder.remove(0);
+        }
+        //if previous < current - movement will be towards left(towards max)
+        else {
             //add values to accessOrder starting from current (will be in the first index) to the end of arrayList
-            for (int i = location; i < new_sequence.size(); i++) {
-                result.add(new_sequence.get(i));
+            for (int i = tmpSequence.indexOf(current); i < tmpSequence.size(); i++) {
+                accessOrder.add(tmpSequence.get(i));
             }
             //add max as it is not inside the arrayList yet
-            result.add(max);
-            //
-            for (int i = location - 1; i >= 0; i--) {
-                result.add(new_sequence.get(i));
+            accessOrder.add(max);
+            //add the remaining values to arrayList
+            //basically goes back by 1 index
+            //for loop ends when i reaches 0 and has been inserted to accessOrder
+            for (int i = tmpSequence.indexOf(current) - 1; i >= 0; i--) {
+                accessOrder.add(tmpSequence.get(i));
             }
             //remove extra current at starting index
-            result.remove(0);
-            int[] scan = new int[result.size()];
-            for (int i = 0; i < result.size(); i++) {
-                scan[i] = result.get(i);
-            }
-            return scan;
+            accessOrder.remove(0);
         }
+        //put accessOrder into an array bc output is set to be an array
+        int[] scan = new int[accessOrder.size()];
+        for (int i = 0; i < accessOrder.size(); i++) {
+            scan[i] = accessOrder.get(i);
+        }
+        return scan;
+    }
+
+
+    private int[] arrangeByCSCAN(int previous, int current, int sequence[], int cylinders) {
+        int s = sequence.length;
+        ArrayList<Integer> accessOrder = new ArrayList<>();
+        ArrayList<Integer> tmpSequence = new ArrayList<>();
+        int max = cylinders -1;
+        int min = 0;
+
+        for (int i = 0; i < s; i++) {
+            tmpSequence.add(sequence[i]);
+        }
+
+        tmpSequence.add(current);
+
+        Collections.sort(tmpSequence);
+
+
+        if (previous > current) {
+
+            for (int i = tmpSequence.indexOf(current); i >= 0; i--) {
+                accessOrder.add(tmpSequence.get(i));
+            }
+
+            accessOrder.add(min);
+            accessOrder.add(max);
+
+            for (int i = tmpSequence.indexOf(current) + 1; i < tmpSequence.size(); i++) {
+                accessOrder.add(tmpSequence.get(i));
+            }
+            //remove extra current at the front bc idk why it's there
+            accessOrder.remove(0);
+        }
+        //if previous < current - movement will be towards left(towards max)
         else {
-            for (int i = location; i >= 0; i--) {
-                result.add(new_sequence.get(i));
+            //add values to accessOrder starting from current (will be in the first index) to the end of arrayList
+            for (int i = tmpSequence.indexOf(current); i < tmpSequence.size(); i++) {
+                accessOrder.add(tmpSequence.get(i));
             }
-            if (!result.contains(0)) {
-                result.add(0);
+            //add max as it is not inside the arrayList yet
+            accessOrder.add(max);
+            accessOrder.add(min);
+            //add the remaining values to arrayList
+            //basically goes back by 1 index
+            //for loop ends when i reaches 0 and has been inserted to accessOrder
+            for (int i = tmpSequence.indexOf(current) - 1; i >= 0; i--) {
+                accessOrder.add(tmpSequence.get(i));
             }
-            for (int i = location + 1; i < new_sequence.size(); i++) {
-                result.add(new_sequence.get(i));
-            }
-            result.remove(0);
-
-            int[] scan = new int[result.size()];
-            for (int i = 0; i < result.size(); i++) {
-                scan[i] = result.get(i);
-            }
-            return scan;
+            //remove extra current at starting index
+            accessOrder.remove(0);
         }
-
+        //put accessOrder into an array bc output is set to be an array
+        int[] cScan = new int[accessOrder.size()];
+        for (int i = 0; i < accessOrder.size(); i++) {
+            cScan[i] = accessOrder.get(i);
+        }
+        return cScan;
     }
 }
 
