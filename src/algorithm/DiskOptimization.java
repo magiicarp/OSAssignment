@@ -32,6 +32,7 @@ public class DiskOptimization {
 
     public void generateAnalysis()
     {
+        //call the method
         generateFCFS();
         generateSSTF();
         generateSCAN();
@@ -41,6 +42,7 @@ public class DiskOptimization {
 
     public void printSequence(String name, int location[])
     {
+        //output for the disk optimization
         String sequence = "";
         String working1 = "";
         String working2 = "";
@@ -104,6 +106,8 @@ public class DiskOptimization {
     private int[] arrangeBySSTF(int current, int sequence[])
     {
         int n = sequence.length;
+
+        //create array
         int sstf[] = new int[n];
         for (int i = 0; i < n; i++)
         {
@@ -111,6 +115,8 @@ public class DiskOptimization {
 
         }
         int ii = -1;
+
+
         for (int i = 0; i < n; i++)
         {
             int minimum = Integer.MAX_VALUE;
@@ -135,52 +141,53 @@ public class DiskOptimization {
 
     private int[] arrangeBySCAN(int previous, int current, int sequence[], int cylinders) {
         int s = sequence.length;
+
+        //create 2 arrayList
         ArrayList<Integer> accessOrder = new ArrayList<>();
         ArrayList<Integer> tmpSequence = new ArrayList<>();
+
+        //define the max and min
         int max = cylinders -1;
         int min = 0;
-        //add sequence values to newSequence
+        //add sequence values to tmpSequence
         for (int i = 0; i < s; i++) {
             tmpSequence.add(sequence[i]);
         }
-        //add current to the newSequence end ArrayList
+        //add current to the tmpSequence end ArrayList
         tmpSequence.add(current);
-        //Sort newSequence (ascending order)
+        //Sort tmpSequence (ascending order)
         Collections.sort(tmpSequence);
 
-        //if previous > current - movement will be towards left(towards min)
+        //if previous > current , it will moves towards the min
         if (previous > current) {
-            //goes bac by 1 index and inserts element into accessOrder
-            for (int i = tmpSequence.indexOf(current); i >= 0; i--) {
-                accessOrder.add(tmpSequence.get(i));
-            }
-            //add min as it is not in arrayList
-            accessOrder.add(min);
-            //insert the rest of the elements into the accessOrder
-            for (int i = tmpSequence.indexOf(current) + 1; i < tmpSequence.size(); i++) {
-                accessOrder.add(tmpSequence.get(i));
-            }
-            //remove extra current at the front bc idk why it's there
-            accessOrder.remove(0);
-        }
-        //if previous < current - movement will be towards left(towards max)
-        else {
-            //add values to accessOrder starting from current (will be in the first index) to the end of arrayList
-            for (int i = tmpSequence.indexOf(current); i < tmpSequence.size(); i++) {
-                accessOrder.add(tmpSequence.get(i));
-            }
-            //add max as it is not inside the arrayList yet
-            accessOrder.add(max);
-            //add the remaining values to arrayList
-            //basically goes back by 1 index
-            //for loop ends when i reaches 0 and has been inserted to accessOrder
+            //goes back by 1 index and inserts values into accessOrder
             for (int i = tmpSequence.indexOf(current) - 1; i >= 0; i--) {
                 accessOrder.add(tmpSequence.get(i));
             }
-            //remove extra current at starting index
-            accessOrder.remove(0);
+            //add min in accessOrder
+            accessOrder.add(min);
+
+            //add the remaining values into the accessOrder
+            for (int i = tmpSequence.indexOf(current) + 1; i < tmpSequence.size(); i++) {
+               accessOrder.add(tmpSequence.get(i));
+           }
+
         }
-        //put accessOrder into an array bc output is set to be an array
+        //if previous < current, it will moves towards the max
+        else {
+            //add values to accessOrder starting from current + 1 (second index) to the end of the arrayList
+            for (int i = tmpSequence.indexOf(current) + 1; i < tmpSequence.size(); i++) {
+                accessOrder.add(tmpSequence.get(i));
+            }
+            //add max in the accessOrder
+            accessOrder.add(max);
+
+            //then add the remaining values in the accessOrder
+            for (int i = tmpSequence.indexOf(current) - 1; i >= 0; i--) {
+                accessOrder.add(tmpSequence.get(i));
+            }
+        }
+        //put accessOrder into an array as output is set to an array
         int[] scan = new int[accessOrder.size()];
         for (int i = 0; i < accessOrder.size(); i++) {
             scan[i] = accessOrder.get(i);
@@ -207,7 +214,7 @@ public class DiskOptimization {
 
         if (previous > current) {
 
-            for (int i = tmpSequence.indexOf(current); i >= 0; i--) {
+            for (int i = tmpSequence.indexOf(current) -1; i >= 0; i--) {
                 accessOrder.add(tmpSequence.get(i));
             }
 
@@ -217,13 +224,11 @@ public class DiskOptimization {
             for (int i = tmpSequence.indexOf(current) + 1; i < tmpSequence.size(); i++) {
                 accessOrder.add(tmpSequence.get(i));
             }
-            //remove extra current at the front bc idk why it's there
-            accessOrder.remove(0);
         }
         //if previous < current - movement will be towards left(towards max)
         else {
             //add values to accessOrder starting from current (will be in the first index) to the end of arrayList
-            for (int i = tmpSequence.indexOf(current); i < tmpSequence.size(); i++) {
+            for (int i = tmpSequence.indexOf(current) + 1; i < tmpSequence.size(); i++) {
                 accessOrder.add(tmpSequence.get(i));
             }
             //add max as it is not inside the arrayList yet
@@ -235,8 +240,6 @@ public class DiskOptimization {
             for (int i = tmpSequence.indexOf(current) - 1; i >= 0; i--) {
                 accessOrder.add(tmpSequence.get(i));
             }
-            //remove extra current at starting index
-            accessOrder.remove(0);
         }
         //put accessOrder into an array bc output is set to be an array
         int[] cScan = new int[accessOrder.size()];
@@ -265,21 +268,20 @@ public class DiskOptimization {
 
         if (previous > current) {
 
-            for (int i = tmpSequence.indexOf(current); i >= 0; i--) {
+            //add values to accessOrder starting from current - 1
+            for (int i = tmpSequence.indexOf(current) - 1; i >= 0; i--) {
                 accessOrder.add(tmpSequence.get(i));
             }
 
-
+            //add the remaining values in the arrayList
             for (int i = tmpSequence.indexOf(current) + 1; i < tmpSequence.size(); i++) {
                 accessOrder.add(tmpSequence.get(i));
             }
-            //remove extra current at the front bc idk why it's there
-            accessOrder.remove(0);
         }
         //if previous < current - movement will be towards left(towards max)
         else {
             //add values to accessOrder starting from current (will be in the first index) to the end of arrayList
-            for (int i = tmpSequence.indexOf(current); i < tmpSequence.size(); i++) {
+            for (int i = tmpSequence.indexOf(current) +1; i < tmpSequence.size(); i++) {
                 accessOrder.add(tmpSequence.get(i));
             }
             //add max as it is not inside the arrayList yet
@@ -289,8 +291,7 @@ public class DiskOptimization {
             for (int i = tmpSequence.indexOf(current) - 1; i >= 0; i--) {
                 accessOrder.add(tmpSequence.get(i));
             }
-            //remove extra current at starting index
-            accessOrder.remove(0);
+
         }
         //put accessOrder into an array bc output is set to be an array
         int[] look = new int[accessOrder.size()];
