@@ -165,7 +165,8 @@ public class DiskOptimization {
                 accessOrder.add(tmpSequence.get(i));
             }
             //add min in accessOrder
-            accessOrder.add(min);
+            if (!accessOrder.contains(0))
+                accessOrder.add(min);
 
             //add the remaining values into the accessOrder
             for (int i = tmpSequence.indexOf(current) + 1; i < tmpSequence.size(); i++) {
@@ -180,7 +181,8 @@ public class DiskOptimization {
                 accessOrder.add(tmpSequence.get(i));
             }
             //add max in the accessOrder
-            accessOrder.add(max);
+            if (!accessOrder.contains(max))
+                accessOrder.add(max);
 
             //then add the remaining values in the accessOrder
             for (int i = tmpSequence.indexOf(current) - 1; i >= 0; i--) {
@@ -217,13 +219,21 @@ public class DiskOptimization {
             for (int i = tmpSequence.indexOf(current) -1; i >= 0; i--) {
                 accessOrder.add(tmpSequence.get(i));
             }
+            if (!accessOrder.contains(0))
+                accessOrder.add(min);
 
-            accessOrder.add(min);
-            accessOrder.add(max);
 
-            for (int i = tmpSequence.indexOf(current) + 1; i < tmpSequence.size(); i++) {
+
+            for (int i = tmpSequence.size() - 1; i > tmpSequence.indexOf(current); i--) {
+
                 accessOrder.add(tmpSequence.get(i));
             }
+
+            if (!accessOrder.contains(max))
+                accessOrder.add(accessOrder.indexOf(min) + 1,max);
+
+
+
         }
         //if previous < current - movement will be towards left(towards max)
         else {
@@ -232,14 +242,17 @@ public class DiskOptimization {
                 accessOrder.add(tmpSequence.get(i));
             }
             //add max as it is not inside the arrayList yet
-            accessOrder.add(max);
-            accessOrder.add(min);
+            if (!accessOrder.contains(cylinders - 1))
+                accessOrder.add(max);
+
             //add the remaining values to arrayList
             //basically goes back by 1 index
             //for loop ends when i reaches 0 and has been inserted to accessOrder
-            for (int i = tmpSequence.indexOf(current) - 1; i >= 0; i--) {
+            for (int i = tmpSequence.get(0); i < tmpSequence.indexOf(current); i++) {
                 accessOrder.add(tmpSequence.get(i));
             }
+            if (!accessOrder.contains(0))
+                accessOrder.add(min);
         }
         //put accessOrder into an array bc output is set to be an array
         int[] cScan = new int[accessOrder.size()];
