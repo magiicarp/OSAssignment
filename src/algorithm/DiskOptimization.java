@@ -2,8 +2,8 @@ package algorithm;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.lang.reflect.Array;
-import java.util.Arrays;
+//import java.lang.reflect.Array;
+//import java.util.Arrays;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,24 +72,27 @@ public class DiskOptimization {
 
 
     }
-
+    
+    //generate FCFS
     public void generateFCFS()
     {
         int location[] = dp.getSequence();
         printSequence("FCFS", location);
     }
 
-
+    //generate SSTF
     public void generateSSTF()
     {
         int location[] = arrangeBySSTF(dp.getCurrent(), dp.getSequence());
         printSequence("SSTF", location);
     }
+    
     //generate SCAN
     public void generateSCAN(){
         int location[] = arrangeBySCAN(dp.getPrevious(), dp.getCurrent(), dp.getSequence(), dp.getCylinders());
         printSequence("SCAN", location);
     }
+    
     //generate CSCAN
     public void generateCSCAN(){
         int location[] = arrangeByCSCAN(dp.getPrevious(), dp.getCurrent(), dp.getSequence(), dp.getCylinders());
@@ -102,7 +105,7 @@ public class DiskOptimization {
         printSequence("LOOK", location);
     }
 
-    //arange bt sstf
+    //SSTF algorithm
     private int[] arrangeBySSTF(int current, int sequence[])
     {
         int n = sequence.length;
@@ -138,7 +141,8 @@ public class DiskOptimization {
         }
         return sstf;
     }
-
+    
+    //SCAN algorithm
     private int[] arrangeBySCAN(int previous, int current, int sequence[], int cylinders) {
         int s = sequence.length;
 
@@ -197,7 +201,7 @@ public class DiskOptimization {
         return scan;
     }
 
-
+    //CSCAN algorithm
     private int[] arrangeByCSCAN(int previous, int current, int sequence[], int cylinders) {
         int s = sequence.length;
         ArrayList<Integer> accessOrder = new ArrayList<>();
@@ -262,23 +266,30 @@ public class DiskOptimization {
         return cScan;
     }
 
-    //LOOK
+    //LOOK algorithm
     private int[] arrangeByLOOK(int previous, int current, int sequence[], int cylinders) {
         int s = sequence.length;
+        
+        //construct 2 arraylists of integer values
         ArrayList<Integer> accessOrder = new ArrayList<>();
         ArrayList<Integer> tmpSequence = new ArrayList<>();
+        
+        //determine the max and min
         int max = cylinders -1;
         int min = 0;
-
+        
+        //add sequence values to tmpSequence
         for (int i = 0; i < s; i++) {
             tmpSequence.add(sequence[i]);
         }
-
+        
+        //add current to tmpSequence 
         tmpSequence.add(current);
-
+        
+        //sort tmpSequence in ascending order
         Collections.sort(tmpSequence);
 
-
+        //if previous > current - the direction will move towards the min(right)
         if (previous > current) {
 
             //add values to accessOrder starting from current - 1
@@ -291,14 +302,16 @@ public class DiskOptimization {
                 accessOrder.add(tmpSequence.get(i));
             }
         }
-        //if previous < current - movement will be towards left(towards max)
+        
+        //if previous < current - the direction will move towards the max(left)
         else {
-            //add values to accessOrder starting from current (will be in the first index) to the end of arrayList
+        	
+            //add values to accessOrder starting from current + 1
             for (int i = tmpSequence.indexOf(current) +1; i < tmpSequence.size(); i++) {
                 accessOrder.add(tmpSequence.get(i));
             }
-            //add max as it is not inside the arrayList yet
-            //add the remaining values to arrayList
+            
+            //add values to accessOrder starting from current - 1
             //basically goes back by 1 index
             //for loop ends when i reaches 0 and has been inserted to accessOrder
             for (int i = tmpSequence.indexOf(current) - 1; i >= 0; i--) {
@@ -306,6 +319,7 @@ public class DiskOptimization {
             }
 
         }
+        
         //put accessOrder into an array bc output is set to be an array
         int[] look = new int[accessOrder.size()];
         for (int i = 0; i < accessOrder.size(); i++) {
