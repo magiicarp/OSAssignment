@@ -112,30 +112,42 @@ public class DiskOptimization {
 
         //create array
         int sstf[] = new int[n];
+        //insert elements from sequence to sstf array
         for (int i = 0; i < n; i++)
         {
             sstf[i] = sequence[i];
 
         }
+        //initialize ii to the value -1
         int ii = -1;
 
 
         for (int i = 0; i < n; i++)
         {
+            //find the biggest number in array and assign it as minimum
             int minimum = Integer.MAX_VALUE;
+            //assign value of i as ii
             ii = i;
             for (int j = i; j < n; j++)
             {
+                //find the distance between the current and the index j in sstf array
                 int distance = Math.abs(current - sstf[j]);
+                //if the distance is lesser than the minimum
+                //index j will be assigned to ii
+                //then set the distance as the new minimum
                 if (distance < minimum)
                 {
                     ii = j;
                     minimum = distance;
                 }
             }
+            //assign index i of sstf as a temporary variable
             int tmp = sstf[i];
+            //assign index ii of sstf as the new index i
             sstf[i] = sstf[ii];
+            //assign the temporary variable into index ii
             sstf[ii] = tmp;
+            //set value in index i as the new current
             current = sstf[i];
 
         }
