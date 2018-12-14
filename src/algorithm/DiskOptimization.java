@@ -216,35 +216,42 @@ public class DiskOptimization {
     //CSCAN algorithm
     private int[] arrangeByCSCAN(int previous, int current, int sequence[], int cylinders) {
         int s = sequence.length;
+
+        //create 2 arrayList
         ArrayList<Integer> accessOrder = new ArrayList<>();
         ArrayList<Integer> tmpSequence = new ArrayList<>();
+
+        //define the max and min
         int max = cylinders -1;
         int min = 0;
 
+        //add sequence values to tmpSequence
         for (int i = 0; i < s; i++) {
             tmpSequence.add(sequence[i]);
         }
 
+        //add current to the tmpSequence end ArrayList
         tmpSequence.add(current);
-
+        //Sort tmpSequence (ascending order)
         Collections.sort(tmpSequence);
 
-
+        //if previous > current , it will moves towards the min
         if (previous > current) {
-
+            //goes back by 1 index and inserts values into accessOrder
             for (int i = tmpSequence.indexOf(current) -1; i >= 0; i--) {
                 accessOrder.add(tmpSequence.get(i));
             }
+            //add min in accessOrder
             if (!accessOrder.contains(0))
                 accessOrder.add(min);
 
-
-
+            // when it reaches min, it immediately reaches to the other end (max)
+            // then add remaining values to accessOrder starting from the next index of current to the end of the arrayList
             for (int i = tmpSequence.size() - 1; i > tmpSequence.indexOf(current); i--) {
 
                 accessOrder.add(tmpSequence.get(i));
             }
-
+            //add max in the accessOrder after index of min
             if (!accessOrder.contains(max))
                 accessOrder.add(accessOrder.indexOf(min) + 1,max);
 
@@ -267,6 +274,7 @@ public class DiskOptimization {
             for (int i = tmpSequence.get(0); i < tmpSequence.indexOf(current); i++) {
                 accessOrder.add(tmpSequence.get(i));
             }
+            //add min in accessOrder
             if (!accessOrder.contains(0))
                 accessOrder.add(min);
         }
